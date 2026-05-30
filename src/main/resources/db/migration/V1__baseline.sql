@@ -1,0 +1,3 @@
+-- Flyway baseline migration.
+-- Establishes the migration history table on a fresh database.
+-- The core schema is introduced in the following versioned migration.
