@@ -1,0 +1,31 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: qcommerce
+      POSTGRES_USER: qcommerce
+      POSTGRES_PASSWORD: qcommerce
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U qcommerce -d qcommerce"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/qcommerce
+      SPRING_DATASOURCE_USERNAME: qcommerce
+      SPRING_DATASOURCE_PASSWORD: qcommerce
+    ports:
+      - "8080:8080"
+
+volumes:
+  pgdata:
