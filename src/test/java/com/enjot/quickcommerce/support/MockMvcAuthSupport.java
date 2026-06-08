@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Map;
@@ -24,6 +26,16 @@ public abstract class MockMvcAuthSupport extends PostgresContainerSupport {
     protected MockMvc mockMvc;
 
     protected final ObjectMapper objectMapper = new ObjectMapper();
+
+    /**
+     * Keep delivery free across full-stack tests so order totals equal the item
+     * subtotal; the delivery strategy itself is covered by dedicated unit tests.
+     */
+    @DynamicPropertySource
+    static void freeDelivery(DynamicPropertyRegistry registry) {
+        registry.add("app.delivery.free-threshold", () -> "0.00");
+        registry.add("app.delivery.standard-fee", () -> "0.00");
+    }
 
     protected String json(Object value) throws Exception {
         return objectMapper.writeValueAsString(value);

@@ -42,7 +42,8 @@ class OrderServiceTest {
 
     @BeforeEach
     void setUp() {
-        service = new OrderService(orders, carts, cartService);
+        // Free delivery keeps totals equal to the item subtotal for these cases.
+        service = new OrderService(orders, carts, cartService, subtotal -> BigDecimal.ZERO);
     }
 
     private User adult() {
@@ -107,6 +108,20 @@ class OrderServiceTest {
 
         assertThat(response.totalAmount()).isEqualByComparingTo("8.00");
         assertThat(response.items().getFirst().unitPrice()).isEqualByComparingTo("4.00");
+    }
+
+    @Test
+    void checkoutAddsDeliveryFeeFromStrategy() {
+        OrderService withFee = new OrderService(orders, carts, cartService, subtotal -> new BigDecimal("5.00"));
+        User user = adult();
+        Product product = regular("4.00", 10);
+        given(cartService.getOrCreateCart(1L)).willReturn(cartWith(user, product, 2));
+        given(orders.save(any(Order.class))).willAnswer(inv -> inv.getArgument(0));
+
+        var response = withFee.checkout(1L, new com.enjot.quickcommerce.web.dto.CheckoutRequest("addr"));
+
+        assertThat(response.deliveryFee()).isEqualByComparingTo("5.00");
+        assertThat(response.totalAmount()).isEqualByComparingTo("13.00"); // 8.00 items + 5.00 delivery
     }
 
     @Test
