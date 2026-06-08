@@ -13,6 +13,7 @@ import com.enjot.quickcommerce.exception.EntityNotFoundException;
 import com.enjot.quickcommerce.exception.ResourceConflictException;
 import com.enjot.quickcommerce.repository.CartRepository;
 import com.enjot.quickcommerce.repository.OrderRepository;
+import com.enjot.quickcommerce.service.delivery.DeliveryCostStrategy;
 import com.enjot.quickcommerce.web.dto.CheckoutRequest;
 import com.enjot.quickcommerce.web.dto.OrderResponse;
 import org.springframework.stereotype.Service;
@@ -27,11 +28,14 @@ public class OrderService {
     private final OrderRepository orders;
     private final CartRepository carts;
     private final CartService cartService;
+    private final DeliveryCostStrategy deliveryCostStrategy;
 
-    public OrderService(OrderRepository orders, CartRepository carts, CartService cartService) {
+    public OrderService(OrderRepository orders, CartRepository carts, CartService cartService,
+                        DeliveryCostStrategy deliveryCostStrategy) {
         this.orders = orders;
         this.carts = carts;
         this.cartService = cartService;
+        this.deliveryCostStrategy = deliveryCostStrategy;
     }
 
     /**
@@ -50,7 +54,6 @@ public class OrderService {
         order.setUser(user);
         order.setStatus(OrderStatus.NEW);
         order.setDeliveryAddress(request.deliveryAddress());
-        order.setDeliveryFee(BigDecimal.ZERO);
 
         BigDecimal subtotal = BigDecimal.ZERO;
         for (LineItem cartItem : cart.getLineItems()) {
@@ -65,7 +68,9 @@ public class OrderService {
             product.setStockQuantity(product.getStockQuantity() - cartItem.getQuantity());
         }
 
-        order.setTotalAmount(subtotal.add(order.getDeliveryFee()));
+        BigDecimal deliveryFee = deliveryCostStrategy.calculate(subtotal);
+        order.setDeliveryFee(deliveryFee);
+        order.setTotalAmount(subtotal.add(deliveryFee));
         order.addStatusHistory(new OrderStatusHistory(OrderStatus.NEW, user.getEmail()));
         Order saved = orders.save(order);
 
