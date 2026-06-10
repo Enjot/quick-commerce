@@ -64,11 +64,11 @@ class AuthorizationRulesTest extends PostgresContainerSupport {
 
     @Test
     void adminIsAuthorizedOnAdminEndpoint() throws Exception {
-        // Authorized by role; no handler is mapped yet, so the request passes
-        // authorization and resolves to 404 rather than 401/403.
+        // Authorized by role: the request passes security and reaches the controller,
+        // where the empty body fails validation (400) rather than being rejected (401/403).
         mockMvc.perform(post("/products").header(HttpHeaders.AUTHORIZATION, adminToken())
                         .contentType(MediaType.APPLICATION_JSON).content("{}"))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
