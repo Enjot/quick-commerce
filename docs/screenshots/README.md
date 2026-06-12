@@ -1,16 +1,34 @@
 # Swagger UI screenshots
 
-Add screenshots of the running Swagger UI here and reference them from the project README.
+Captured from the running application at `http://localhost:8080/swagger-ui.html`
+(seeded with sample categories, products, a customer and a delivered order).
 
-To capture them:
+## Endpoint overview
 
-1. Start the stack: `docker compose up --build`
-2. Open `http://localhost:8080/swagger-ui.html`
-3. Suggested shots:
-   - the full endpoint list grouped by tag (Authentication, Products, Categories, Cart, Orders),
-   - the **Authorize** dialog with a pasted Bearer token,
-   - a successful `POST /auth/login` response,
-   - an order response showing `status` and `statusHistory`.
-4. Save the images in this folder (e.g. `swagger-overview.png`) and link them in `README.md`.
+The full API grouped by tag (Authentication, Products, Categories, Cart, Orders) plus schemas.
 
-A machine‑readable snapshot of the API is already committed at [`../openapi.json`](../openapi.json).
+![Swagger overview](swagger-overview.png)
+
+## Authorize dialog
+
+Pasting a Bearer JWT into the **Authorize** dialog (`bearerAuth`, HTTP Bearer).
+
+![Authorize dialog](swagger-authorize.png)
+
+## `POST /auth/login` response
+
+A successful login returning the JWT, token type and role.
+
+![Login response](swagger-login-response.png)
+
+## `GET /orders/{id}` response
+
+An order showing `status`, line items with frozen `unitPrice`, and the full `statusHistory`.
+
+![Order response](swagger-order-response.png)
+
+---
+
+To re-capture: start the app, run the seed flow, then drive Swagger UI with a headless
+Chromium/Edge browser. A machine-readable snapshot of the API is committed at
+[`../openapi.json`](../openapi.json).

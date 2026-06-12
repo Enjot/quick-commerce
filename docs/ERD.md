@@ -4,6 +4,11 @@ The schema is owned by Flyway (`src/main/resources/db/migration`). Products use
 `SINGLE_TABLE` inheritance: all subtypes share the `products` table, discriminated by
 `product_type`, with subtype‑specific nullable columns.
 
+![Entity–relationship diagram](ERD.png)
+
+<details>
+<summary>Mermaid source</summary>
+
 ```mermaid
 erDiagram
     users ||--o| carts : "has one"
@@ -71,6 +76,8 @@ erDiagram
         varchar changed_by
     }
 ```
+
+</details>
 
 ## Order lifecycle (State pattern)
 
