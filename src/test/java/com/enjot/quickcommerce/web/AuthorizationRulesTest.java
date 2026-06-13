@@ -46,7 +46,7 @@ class AuthorizationRulesTest extends PostgresContainerSupport {
     }
 
     private String adminToken() throws Exception {
-        return bearer("admin@qcommerce.local", "admin123");
+        return bearer("admin1@mail.com", "admin123");
     }
 
     @Test

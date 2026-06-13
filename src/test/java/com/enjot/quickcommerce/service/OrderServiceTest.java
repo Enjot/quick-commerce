@@ -168,7 +168,7 @@ class OrderServiceTest {
         order.setStatus(OrderStatus.NEW);
         given(orders.findById(3L)).willReturn(Optional.of(order));
 
-        var response = service.transitionStatus(3L, OrderStatus.PAID, "admin@qcommerce.local");
+        var response = service.transitionStatus(3L, OrderStatus.PAID, "admin1@mail.com");
 
         assertThat(response.status()).isEqualTo(OrderStatus.PAID);
         assertThat(order.getStatusHistory()).extracting("status").contains(OrderStatus.PAID);

@@ -70,7 +70,7 @@ On first start the application seeds an admin account (configurable via `APP_ADM
 `APP_ADMIN_PASSWORD`):
 
 ```
-email:    admin@qcommerce.local
+email:    admin1@mail.com
 password: admin123
 ```
 
